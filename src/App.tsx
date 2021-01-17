@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import Dropzone from 'react-dropzone'
 import './App.css'
 import { AppConfig } from './models/app-config';
+import { AppointmentBookings } from './models/appointment-bookings';
 
 
 export const App = () => {
-  const [bookings, setBookings] = useState([])
+  const [bookings, setBookings] = useState<AppointmentBookings[]>([])
 
   useEffect(() => {
     fetch(AppConfig.bookingsUrl)

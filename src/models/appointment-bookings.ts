@@ -1,4 +1,4 @@
-export interface Appointment {
+export interface AppointmentBookings {
     // minutes
     duration: number;
     // looks like a number but the pre-ceding zeroes mauy matter
