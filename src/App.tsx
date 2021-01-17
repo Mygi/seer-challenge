@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import Dropzone from 'react-dropzone'
 import './App.css'
-import { AppConfig } from './models/app-config';
 import { AppointmentBookings } from './models/appointment-bookings';
 
 
 export const App = () => {
   const [bookings, setBookings] = useState<AppointmentBookings[]>([])
-
+  // throw exception if undefined
+  const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
+  
   useEffect(() => {
-    fetch(AppConfig.bookingsUrl)
+    fetch(url)
       .then((response) => response.json())
-      .then(setBookings)
+      .then(setBookings, (reason: unknown) => console.error('Network Error'))
   }, [])
 
-  const onDrop = (files) => {
+  const onDrop = (files: unknown) => {
     console.log(files)
   }
 
