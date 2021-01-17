@@ -37,7 +37,7 @@ export const App = () => {
               <span className='App-booking-duration'>
                 {duration.toFixed(1)}
               </span>
-              <span className='App-booking-user'>{booking.userId}</span>
+              <span className='App-booking-user'>{booking.user_id}</span>
             </p>
           )
         })}
