@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import Dropzone from 'react-dropzone'
 import './App.css'
+import { AppConfig } from './models/app-config';
 
-const apiUrl = 'http://localhost:3001'
 
 export const App = () => {
   const [bookings, setBookings] = useState([])
 
   useEffect(() => {
-    fetch(`${apiUrl}/bookings`)
+    fetch(AppConfig.bookingsUrl)
       .then((response) => response.json())
       .then(setBookings)
   }, [])
