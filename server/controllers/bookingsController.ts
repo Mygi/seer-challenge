@@ -16,15 +16,20 @@ export class BookingsController {
 
     public static readonly SUCCESS_MSG = 'SUCCESS';
     private bookings: AppointmentBooking[] = [];
+    private currentIndex = 0;
     constructor() {
         this.bookings = JSON.parse(fs.readFileSync('./server/bookings.json').toString()).map(
-            (bookingRecord: ServerBookings) => new AppointmentBooking(
-              {
+            (bookingRecord: ServerBookings) => {
+                this.currentIndex++;
+                const booking = new AppointmentBooking(
+                {
                   time:  bookingRecord.time,
                   duration: bookingRecord.duration,
-                  userId: bookingRecord.user_id,
-            }),
-          )
+                  userId: bookingRecord.user_id,                  
+                });
+                booking.id = this.currentIndex;                
+                return booking;
+            });
     }
     @Get()
     public getBookings(req: express.Request, res: express.Response) {

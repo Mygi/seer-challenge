@@ -37,3 +37,11 @@ export function ReadBookingsFromCsvFiles(files: File[]): Promise<AppointmentBook
     // how should we handle error?  Don't catch and pass it forwards?
 }
     
+/**
+ * Get the earliest date from a list
+ * @param bookings 
+ */
+export function GetFirstBooking(bookings: AppointmentBooking[]): Date {
+    const startDate = new Date(Math.min.apply(null, bookings.map( x => x.start.getDate())));
+    return startDate;
+}
