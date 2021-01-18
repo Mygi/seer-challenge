@@ -6,11 +6,9 @@ import { parse, ParseResult } from 'papaparse';
  * @param result 
  */
 export function MapCsvData(result: ParseResult<AppointmentBookingsCsv>): AppointmentBooking[] {
-    const output = result.data
-                 .filter( x => x.duration !== undefined && x.time !== undefined)
-                 .map( (row) => new AppointmentBooking(row) );
-    console.log( output );
-    return output;
+    return result.data
+                 .filter( x => x.duration !== undefined && !isNaN(+x.duration) && x.time !== undefined && !isNaN(Date.parse(x.time)) )
+                 .map( (row) => new AppointmentBooking(row) );        
 }
 
 /**
