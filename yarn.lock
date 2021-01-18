@@ -1586,6 +1586,11 @@
     "@telerik/kendo-intl" "^2.0.0"
     tslib "^1.7.0"
 
+"@progress/kendo-theme-default@^4.32.0":
+  version "4.32.0"
+  resolved "https://registry.yarnpkg.com/@progress/kendo-theme-default/-/kendo-theme-default-4.32.0.tgz#c0d7fb5d64ba68a9d8f49ac8b0a463f2a3d5ad3a"
+  integrity sha512-RlirlsHr/l5arcGGuVU7jZqiAe7qHLxD1N5nI4IEfrOICFcjSZIT7TOpQHIV5bb62EPCt2gLofWw6p1OQbzw0A==
+
 "@progress/pako-esm@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@progress/pako-esm/-/pako-esm-1.0.1.tgz#eeb7d2c3f8e865198edf23fb42645bd8cb513a11"

@@ -2,21 +2,20 @@ import React, { useState, useEffect } from 'react'
 import Dropzone from 'react-dropzone'
 import './App.css'
 import { AppointmentBooking } from './models/appointment-bookings';
-import { GetFirstBooking, ReadBookingsFromCsvFiles } from './services/bookings-functions';
-import { Scheduler, SchedulerDataChangeEvent, TimelineView } from '@progress/kendo-react-scheduler';
+import { GetFirstBooking, MapJsonData, ReadBookingsFromCsvFiles } from './services/bookings-functions';
+import { Scheduler, SchedulerDataChangeEvent, TimelineView, WeekView } from '@progress/kendo-react-scheduler';
 
 
 export const App = () => {
   const [bookings, setBookings] = useState<AppointmentBooking[]>([])
   // throw exception if undefined
   const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
-  let defaultDate = new Date(Date.now());
+  let defaultDate = new Date(2020, 2, 1);
   // need an error dialog
   useEffect(() => {
     fetch(url)
       .then((response) => response.json())
-      .then(setBookings, (reason: unknown) => console.error('Network Error'))
-      .then(() => defaultDate = GetFirstBooking(bookings))
+      .then((data) => setBookings(MapJsonData(data)), (reason: unknown) => console.error('Network Error'))      
   }, [])
 
   const onDrop = (files: File[]) => {
@@ -41,7 +40,7 @@ export const App = () => {
         <p>Existing bookings:</p>
         <Scheduler
                 data={bookings}
-                defaultDate={new Date()}
+                defaultDate={defaultDate}
                 onDataChange={handleDataChange}     
                 editable={{
                   add: false,
@@ -52,23 +51,11 @@ export const App = () => {
                   select: true
               }}           
             >
-                <TimelineView showWorkHours={false} title="Default" />
+                <TimelineView showWorkHours={true} title="Timeline" />
                 {/* Disable current time */}
-                <TimelineView showWorkHours={false} title="Disabled" name="disabled" currentTimeMarker={false} />
-            </Scheduler>
-        {bookings.map((booking, i) => {
-          const date = new Date(booking.time)
-          const duration = booking.duration 
-          return (
-            <p key={i} className='App-booking'>
-              <span className='App-booking-time'>{date.toString()}</span>
-              <span className='App-booking-duration'>
-                {duration.toFixed(1)}
-              </span>
-              <span className='App-booking-user'>{booking.userId}</span>
-            </p>
-          )
-        })}
+                <WeekView title="Week"
+            />
+            </Scheduler>       
       </div>
     </div>
   )

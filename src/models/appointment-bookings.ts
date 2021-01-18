@@ -15,8 +15,8 @@ export interface IAppointmentBookings {
     // looks like a number but the pre-ceding zeroes mauy matter
     userId: string;
     // Date with timezone expected
-    time: Date;
-    id?: number;
+    time: Date | string;
+    id: number;
 }
 
 export class AppointmentBooking implements IAppointmentBookings {
@@ -33,6 +33,7 @@ export class AppointmentBooking implements IAppointmentBookings {
         this.time = new Date(Date.parse(mapped.time));
         this.userId = mapped.userId;
         this.start = this.time;
+        console.log(this.start, typeof this.start);
         this.end = moment(this.time).add(this.duration, "m").toDate();
     }
     

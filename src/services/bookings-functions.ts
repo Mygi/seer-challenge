@@ -1,4 +1,4 @@
-import { AppointmentBooking, AppointmentBookingsCsv } from '../models/appointment-bookings';
+import { AppointmentBooking, AppointmentBookingsCsv, IAppointmentBookings } from '../models/appointment-bookings';
 import { parse, ParseResult } from 'papaparse';
 
 /**
@@ -9,6 +9,21 @@ export function MapCsvData(result: ParseResult<AppointmentBookingsCsv>): Appoint
     return result.data
                  .filter( x => x.duration !== undefined && !isNaN(+x.duration) && x.time !== undefined && !isNaN(Date.parse(x.time)) )
                  .map( (row) => new AppointmentBooking(row) );        
+}
+
+export function MapJsonData(data: IAppointmentBookings[]): AppointmentBooking[] {
+    const output = data.filter( x => x.duration !== undefined && !isNaN(+x.duration) && x.time !== undefined )
+                .map( (row) => {
+                    const booking = new AppointmentBooking({
+                    duration: row.duration,
+                    time: row.time.toString(),
+                    userId: row.userId
+                    });
+                    booking.id = row.id;
+                    return booking;
+                 } );     
+    console.log(output);
+    return output;
 }
 
 /**
@@ -42,6 +57,12 @@ export function ReadBookingsFromCsvFiles(files: File[]): Promise<AppointmentBook
  * @param bookings 
  */
 export function GetFirstBooking(bookings: AppointmentBooking[]): Date {
-    const startDate = new Date(Math.min.apply(null, bookings.map( x => x.start.getDate())));
-    return startDate;
+    if(bookings.length === 0) {        
+        return new Date(Date.now());
+    }
+    
+    const dates = bookings.map( x => Date.parse(x.time.toString()));    
+    const start = Math.min.apply(null, dates);
+    console.log(new Date(start));
+    return new Date(start);
 }

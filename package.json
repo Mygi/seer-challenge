@@ -19,6 +19,7 @@
     "@progress/kendo-react-popup": "^4.3.0",
     "@progress/kendo-react-scheduler": "^4.3.0",
     "@progress/kendo-react-treeview": "^4.3.0",
+    "@progress/kendo-theme-default": "^4.32.0",
     "@testing-library/dom": "^7.29.4",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
