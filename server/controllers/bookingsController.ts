@@ -3,7 +3,7 @@ import { Logger } from '@overnightjs/logger';
 // Syntax requires esModuleInterop set to true in tslint
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { AppointmentBookings } from '../../src/models/appointment-bookings';
+import { AppointmentBooking } from '../../src/models/appointment-bookings';
 import * as fs from 'fs';
 import { ServerBookings } from 'models/sever-bookings';
 
@@ -15,13 +15,14 @@ import { ServerBookings } from 'models/sever-bookings';
 export class BookingsController {
 
     public static readonly SUCCESS_MSG = 'SUCCESS';
-    private bookings: AppointmentBookings[] = [];
+    private bookings: AppointmentBooking[] = [];
     constructor() {
         this.bookings = JSON.parse(fs.readFileSync('./server/bookings.json').toString()).map(
-            (bookingRecord: ServerBookings) => ({
-              time:  Date.parse(bookingRecord.time),
-              duration: bookingRecord.duration * 60 * 1000, // mins into ms
-              userId: bookingRecord.user_id,
+            (bookingRecord: ServerBookings) => new AppointmentBooking(
+              {
+                  time:  bookingRecord.time,
+                  duration: bookingRecord.duration,
+                  userId: bookingRecord.user_id,
             }),
           )
     }

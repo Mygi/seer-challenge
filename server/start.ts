@@ -1,4 +1,4 @@
-import { BookingsServer } from "./server";
+import { BookingsServer } from "./bookings-server";
 
 let server = new BookingsServer();
 if(!!process.env.API_PORT && !isNaN(+process.env.API_PORT) ) {

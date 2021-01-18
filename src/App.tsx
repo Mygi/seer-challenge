@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import Dropzone from 'react-dropzone'
 import './App.css'
-import { AppointmentBookings, AppointmentBookingsCsv } from './models/appointment-bookings';
-import { parse, ParseResult } from 'papaparse';
+import { AppointmentBooking } from './models/appointment-bookings';
+import { ReadBookingsFromCsvFiles } from './services/bookings-functions';
 
 export const App = () => {
-  const [bookings, setBookings] = useState<AppointmentBookings[]>([])
+  const [bookings, setBookings] = useState<AppointmentBooking[]>([])
   // throw exception if undefined
   const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
   
+  // need an error dialog
   useEffect(() => {
     fetch(url)
       .then((response) => response.json())
@@ -17,28 +18,7 @@ export const App = () => {
 
   const onDrop = (files: File[]) => {
     // to move and test
-    files.forEach( file => {
-      const results = parse(file, {
-        header: true,
-        delimiter: ", ",
-        complete: (result: ParseResult<AppointmentBookingsCsv>) => 
-        setBookings(result.data
-                           .filter ( x => {
-                             console.log(x);
-                             return x.duration !== undefined && x.time !== undefined;
-                            })
-                           .map( (row) => {         
-          console.log(+row?.duration);
-          return {
-            duration: +row?.duration,
-            userId: row.userId,
-            time: new Date(Date.parse(row.time))
-          };
-      }))
-    });
-  });
-                        /*   {)) */
-                           
+    ReadBookingsFromCsvFiles(files).then( results => setBookings( bookings.concat(results)) );    
   }
 
   return (
