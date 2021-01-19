@@ -8,6 +8,7 @@ A web app for uploading bookings from `.csv` files.
 
 Existing functionality:
 
+
 - ExpressJS server with `GET` endpoint `/bookings` which responds with existing bookings (from a hard-coded json file that is read in). Bookings have a time, duration, and user ID.
 - ReactJS app which fetches and shows existing bookings in a list and has a file input for bookings files (`.csv` only).
 - A `.csv` file with entries corresponding to bookings that is to be uploaded but which contains bookings that overlap with some of the existing bookings.
@@ -25,8 +26,6 @@ We have a branch called `hooks` with a more modern version of the main App compo
 Note: This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 ## Additional required features
-
-What needs to be added / changed:
 
 - The app needs to read and parse the provided `.csv` file when submitted via the file input (dropzone).
 - The app needs to identify new bookings parsed from this file that overlap with existing bookings.
@@ -63,3 +62,4 @@ Migrated the client and server to typescript and set up jest testing for both sy
 * lodash (v4.17.20) for uniqueId and intersections
 * @progress/kendo-react-scheduler (v4.3.0) and required dependenices for the timeline function
 
+NB: All install / start / test commands remain unchanged with the addition of `yarn test-server` which will run API tests
