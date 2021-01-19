@@ -1,0 +1,30 @@
+
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+      "module": "commonjs",
+      "strict": true,
+      "baseUrl": "./",
+      "outDir": "build",
+      "sourceMap": true,
+      "removeComments": true,
+      "experimentalDecorators": true,
+      "target": "es6",
+      "emitDecoratorMetadata": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "importHelpers": true,
+      "types": [
+        "node", "jest"
+      ],
+      "typeRoots": [
+        "../node_modules/@types"
+      ]
+    },
+    "include": [
+      "./**/*.ts",
+      "./**/*.spec.ts"
+    ],
+    "exclude": [            
+    ]
+  }
