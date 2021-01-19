@@ -35,3 +35,8 @@
   display: inline-block;
   width: 80px;
 }
+.confirmed {
+  background-color: aquamarine !important;
+  color: #333 !important;
+  text-transform: uppercase;
+}
