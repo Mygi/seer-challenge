@@ -81,14 +81,15 @@ export function findNearestBin(date: Date, minDurationMinutes: number, isStart: 
 }
 
 /**
- * Create a range of slot intervals in a scheudle
+ * Create a range of slot intervals in a scheudle.. 
+ * The end point must be exclusive or else we get unnecessary overlaps.
  * @param start 
  * @param end 
  * @param interval 
  */
 export function createRange(start: number, end: number, interval: number): number[] {
     const bins: number[] = []; 
-    for( let i = start; i <= end; i= i + interval ) {
+    for( let i = start; i < end; i= i + interval ) {
         bins.push(i);
     }
     return bins;

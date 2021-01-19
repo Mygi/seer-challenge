@@ -115,21 +115,21 @@ describe('bookings-functions', () => {
         expect(binDate.getHours()).toEqual(resultHours);
     });
     it.each([
-        [100, 500, 20, 21],
-        [100, 500, 50, 9]
+        [100, 500, 20, 20],
+        [100, 500, 50, 8]
         ]
     )('should create a range of intervals from start to end inclusive', (start: number, end: number, interval, result) => {
         const range = createRange(start, end, interval);
         expect(range.length).toEqual(result);
         expect(range[0]).toEqual(start);
-        expect(range[range.length -1]).toEqual(end);
+        expect(range[range.length -1]).toEqual(end-interval);
     });
     it.each([
-        [30, 40],
-        [20, 58],
-        [10, 112]
+        [30, 36],
+        [20, 54],
+        [10, 108]
         ]
-    )('should convert a array to histogram', (interval: number, bins: number) => {   
+    )('should convert an array to histogram', (interval: number, bins: number) => {   
         const output = MapCsvData(mockParseData);
         const hist = bookingsToHistogram(output, interval);
         expect(hist.size).toEqual(bins);
@@ -141,8 +141,8 @@ describe('bookings-functions', () => {
         const file1 = new File( [fs.readFileSync('./bookings.csv', 'utf-8')], 'bookings.csv') ;
         ReadBookingFromSingleCsvFile(file1).then( result => {
             const merged = histogramMerge(output, result, 30);            
-            expect(merged.validBookings.length).toEqual(3);            
-            expect(merged.conflictBookings.length).toEqual(5);
+            expect(merged.validBookings.length).toEqual(4);            
+            expect(merged.conflictBookings.length).toEqual(4);
             done();
         });
     });
