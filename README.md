@@ -36,3 +36,30 @@ What needs to be added / changed:
 - The server needs to allow this `POST` request (`/bookings`) from app and update the booking list it has in memory (and therefore the list it returns for the existing `GET` request). There is no need to modify the server to use an actual database instead of storing the data in memory.
 
 Feel free to change any of the existing code (and add any dependencies) to achieve the required specifications / functionality. There is no need to support old browsers, assume a recent version of Firefox/Chrome. If you're having trouble starting or need help with any part, please send us an email and we'll give you a pointer.
+
+## Added Dependencies
+
+Migrated the client and server to typescript and set up jest testing for both systems. I have also added a number of common extensions, this is the updated list:
+*Typescript*
+* typescript and @types/node (version 4.1.3)
+* eslint with prettier (v7.18 and v2.2.1)
+* ts-node (v9.1.1)
+
+*API*
+* overnightjs abd @types/overnightjs for the API
+* @types/cors and @types/express
+* nodemon for watch tasks (v2.0.7)
+* http-status-codes (v2.1.4)
+
+*Testing*
+* @types/jest (v26.0.20)
+* ts-jest (v26.4.4)
+* supertest (v6.1.1)
+
+*Client*
+* @types/react (v17.0.0)
+* papaparse (v5.3.0) and @types/papaparse (for CSV parsing)
+* moment (v2.29.1) for date functions
+* lodash (v4.17.20) for uniqueId and intersections
+* @progress/kendo-react-scheduler (v4.3.0) and required dependenices for the timeline function
+

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/core": "^7.12.10",
     "@overnightjs/core": "^1.7.5",
     "@overnightjs/logger": "^1.2.0",
     "@progress/kendo-date-math": "^1.5.1",
