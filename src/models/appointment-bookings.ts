@@ -27,13 +27,15 @@ export class AppointmentBooking implements IAppointmentBookings {
     end: Date;
     // id = 0 means unsaved in API
     id = 0;
+    color = 'aquamarine';
+    title = '';
 
     constructor(mapped: AppointmentBookingsCsv) {
         this.duration = +mapped?.duration;
         this.time = new Date(Date.parse(mapped.time));
         this.userId = mapped.userId;
         this.start = this.time;
-        console.log(this.start, typeof this.start);
+        this.title = `User: ${this.userId}`;
         this.end = moment(this.time).add(this.duration, "m").toDate();
     }
     
