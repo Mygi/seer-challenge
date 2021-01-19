@@ -1,4 +1,4 @@
-import { Controller, Get } from '@overnightjs/core';
+import { Controller, Get, Post } from '@overnightjs/core';
 import { Logger } from '@overnightjs/logger';
 // Syntax requires esModuleInterop set to true in tslint
 import express from 'express';
@@ -29,10 +29,10 @@ export class BookingsController {
                 });
                 booking.id = this.currentIndex;                
                 return booking;
-            });
+            })
     }
     @Get()
-    public getBookings(req: express.Request, res: express.Response) {
+    getBookings(req: express.Request, res: express.Response) {
         try {            
             return res.status(StatusCodes.OK).json(  this.bookings );
         } catch (err) {
@@ -41,6 +41,20 @@ export class BookingsController {
                 error: err.message,
             });
         }
+    }
+    @Post()
+    postBookings(req: express.Request<AppointmentBooking[]>, res: express.Response) {
+        if(req.body ) {
+            req.body.forEach( (booking: AppointmentBooking) => {
+                this.currentIndex++;
+                booking.id = this.currentIndex;
+                this.bookings.push(booking);
+            });
+            return res.status(StatusCodes.CREATED).json(  this.bookings );
+        } else {
+            return res.status(StatusCodes.ACCEPTED).json( this.bookings );
+        }
+        
     }
 }
 

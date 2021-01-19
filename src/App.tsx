@@ -13,6 +13,7 @@ export const App = () => {
   const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
   
   // need an error dialog
+  // tempting to subscribe to Bookings event but no great value in it yet.
   useEffect(() => {
     fetchBookings().then((results) => {
       setBookings(results);
@@ -26,7 +27,7 @@ export const App = () => {
       const checkResults = histogramMerge(bookings, results, 30);
       saveBookings(checkResults.validBookings).then( (updated) => {
         setBookings( updated.concat( checkResults.conflictBookings.map( invalid => {
-                                                                                    invalid.color = 'Red';
+                                                                                    invalid.conflicts = true;
                                                                                     return invalid;
                                                                       })) );
         setDefaultDate(GetFirstBooking(updated) );
@@ -39,12 +40,8 @@ export const App = () => {
   }
   const CustomItem = (props: SchedulerItemProps) => (
     <SchedulerItem
-        {...props}
-        style={{
-            ...props.style,
-            background: `${props.dataItem.color})`
-        }}
-      className={'confirmed'}
+        {...props}        
+      className={ props.dataItem.conflicts ? 'conflicts' : 'confirmed'}
     />)
   return (
     <div className='App'>

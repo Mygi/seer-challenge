@@ -1,6 +1,6 @@
 import { AppointmentBooking, AppointmentBookingsCsv, IAppointmentBookings } from '../models/appointment-bookings';
 import { parse, ParseResult } from 'papaparse';
-
+import _uniqueId from 'lodash/uniqueId';
 /**
  * Filter out invalid bookings and then map the model to our View Model
  * @param result 
@@ -25,8 +25,7 @@ export function MapJsonData(data: IAppointmentBookings[]): AppointmentBooking[] 
                     });
                     booking.id = row.id;
                     return booking;
-                 } );     
-    console.log(output);
+                 } );         
     return output;
 }
 
@@ -78,7 +77,7 @@ export function findNearestBin(date: Date, minDurationMinutes: number, isStart: 
     
     const binnedMinutes = isStart ? Math.floor(date.getMinutes() / minDurationMinutes) 
                                   : Math.ceil(date.getMinutes() / minDurationMinutes) ;
-    return new Date(date).setMinutes(binnedMinutes);
+    return new Date(date).setMinutes(binnedMinutes * minDurationMinutes);
 }
 
 /**
@@ -89,7 +88,7 @@ export function findNearestBin(date: Date, minDurationMinutes: number, isStart: 
  */
 export function createRange(start: number, end: number, interval: number): number[] {
     const bins: number[] = []; 
-    for( let i = start; i <= end; i++ ) {
+    for( let i = start; i <= end; i= i + interval ) {
         bins.push(i);
     }
     return bins;
@@ -101,18 +100,18 @@ export function createRange(start: number, end: number, interval: number): numbe
  * @param bookings 
  * @param minDurationMinutes 
  */
-export function bookingsToHistogram(bookings: AppointmentBooking[], minDurationMinutes: number): Map<number, AppointmentBooking[]> {
-    const histogram = new Map<number, AppointmentBooking[]>();
+export function bookingsToHistogram(bookings: AppointmentBooking[], minDurationMinutes: number): Map<number, string[]> {
+    const histogram = new Map<number, string[]>();
     // ideally push
     bookings.forEach( booking => {
         const startBin = findNearestBin(booking.start, minDurationMinutes, true );
         const endBin = findNearestBin(booking.end, minDurationMinutes, false );
-        const bins = createRange(startBin, endBin, minDurationMinutes);
+        const bins = createRange(startBin, endBin, minDurationMinutes * 60 * 1000);     
         bins.forEach( bin => {
             if(histogram.has(bin)) {
-                histogram.get(bin)?.push( booking )
-            } else {
-                histogram.set(bin, [booking]);
+                histogram.get(bin)?.push( booking.uniqueId )
+            } else {                
+                histogram.set(bin, [booking.uniqueId]);
             }
         });
     });
@@ -127,24 +126,28 @@ export function bookingsToHistogram(bookings: AppointmentBooking[], minDurationM
  */
 export function histogramMerge(existingBookings: AppointmentBooking[], newBookings: AppointmentBooking[], minDurationMinutes: number): { validBookings: AppointmentBooking[], conflictBookings: AppointmentBooking[] } {
     
-    // ideally push
-    const leftHistogram: Map<number, AppointmentBooking[]> = bookingsToHistogram(existingBookings, minDurationMinutes);
-    const rightHistogram: Map<number, AppointmentBooking[]> = bookingsToHistogram(newBookings, minDurationMinutes);
-    const conflictBookings: AppointmentBooking[] = [];
-    const validBookings: AppointmentBooking[] = [];
-    rightHistogram.forEach( (list, bin) => {
-        if( list.length > 1) {
-            // conflict
-            conflictBookings.concat(list);
-        } // map.get can be undefined in spite of has so || used
-        else if(leftHistogram.has(bin) && (leftHistogram.get(bin)?.length || 0) > 0) {
-            //conflict
-            conflictBookings.concat(list);
-        }
-        else {
-            // no conflict
-            validBookings.concat(list);
-        }        
+    // ideally keep this in state
+    const leftHistogram: Map<number, string[]> = bookingsToHistogram(existingBookings, minDurationMinutes);        
+    let conflictBookings: AppointmentBooking[] = [];
+    let validBookings: AppointmentBooking[] = [];
+    
+    // sort by duration, than attempt to fit each item into the running histogram
+    newBookings.sort( (x, y) => y.duration - x.duration)
+               .forEach( booking => {
+                const bins = createRange(findNearestBin(booking.start, minDurationMinutes, true ),
+                                        findNearestBin(booking.end, minDurationMinutes, false ),
+                                        minDurationMinutes * 60 * 1000);
+                if(!bins.find( x => leftHistogram.has(x))) {
+                    // Add Valid
+                    validBookings.push(booking);
+                    // Extend histogram by prority
+                    bins.forEach( bin => leftHistogram.set(bin, [booking.uniqueId]))
+                } else {
+                    conflictBookings.push(booking);
+                    // The potential optimisation is a block shift to closest free space in the histogram
+                    // repeat until all optimised
+                    // branch on various priorities and reduce
+                }
     });
     return {
         validBookings,
@@ -157,16 +160,20 @@ export function histogramMerge(existingBookings: AppointmentBooking[], newBookin
  * @param bookings 
  */
 export function saveBookings(bookings: AppointmentBooking[]): Promise<AppointmentBooking[]> {
+    const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookings)
     };
-    return fetch('https://jsonplaceholder.typicode.com/posts', requestOptions)
+    return fetch(url, requestOptions)
         .then(response => response.json())
         .then(data => MapJsonData(data));
 }
 
+/**
+ * retrieve and map server results
+ */
 export function fetchBookings(): Promise<AppointmentBooking[]> {
     const url =  process.env.REACT_APP_BOOKINGS_URL === undefined ? '' : process.env.REACT_APP_BOOKINGS_URL;
     return fetch(url)

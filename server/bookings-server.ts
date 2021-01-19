@@ -3,16 +3,18 @@ import { Server } from '@overnightjs/core';
 // requires will work with CORS in spi
 var cors = require('cors')
 import BookingsController from './controllers/bookingsController';
+import express from 'express';
 
 export class BookingsServer extends Server {
 
     constructor() {
         super(true);
         this.app.use(cors());
+        this.app.use(express.json());
         super.addControllers(new BookingsController());
     }
 
-    public start(port: number): void {
+    start(port: number): void {
         this.app.listen(port, () => {            
         });
     }

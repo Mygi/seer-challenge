@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _uniqueId from 'lodash/uniqueId';
 
 export interface AppointmentBookingsCsv {
     // minutes
@@ -27,15 +28,16 @@ export class AppointmentBooking implements IAppointmentBookings {
     end: Date;
     // id = 0 means unsaved in API
     id = 0;
-    color = 'aquamarine';
+    conflicts = false;
     title = '';
+    uniqueId = _uniqueId();
 
     constructor(mapped: AppointmentBookingsCsv) {
         this.duration = +mapped?.duration;
         this.time = new Date(Date.parse(mapped.time));
         this.userId = mapped.userId;
         this.start = this.time;
-        this.title = `User: ${this.userId}`;
+        this.title = `Event Id: ${this.uniqueId} (User: ${this.userId})`;
         this.end = moment(this.time).add(this.duration, "m").toDate();
     }
     
